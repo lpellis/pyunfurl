@@ -9,6 +9,43 @@ class UnitTests(unittest.TestCase):
     def test_import(self):
         self.assertIsNotNone(pyunfurl)
 
+    def test_custom_embed(self):
+        custom = pyunfurl.custom_unfurl(
+            "https://news.ycombinator.com/item?id=16319505", 15
+        )
+        self.assertEqual(
+            "https://news.ycombinator.com/favicon.ico",
+            custom["favicon"],
+            "custom:favicon",
+        )
+        self.assertEqual(
+            "https://news.ycombinator.com/item?id=16319505", custom["url"], "custom:url"
+        )
+        self.assertEqual(
+            "SpaceX’s Falcon Heavy successfully launches",
+            custom["title"],
+            "custom:title",
+        )
+        self.assertEqual("", custom["description"], "custom:description")
+
+        custom = pyunfurl.custom_unfurl(
+            "https://news.ycombinator.com/item?id=16319522", 15
+        )
+        self.assertEqual(
+            "https://news.ycombinator.com/favicon.ico",
+            custom["favicon"],
+            "custom:favicon",
+        )
+        self.assertEqual(
+            "https://news.ycombinator.com/item?id=16319522", custom["url"], "custom:url"
+        )
+        self.assertEqual(
+            "SpaceX’s Falcon Heavy successfully launches",
+            custom["title"],
+            "custom:title",
+        )
+        self.assertEqual("There was something doubly awesome about the two falcons landing at the same time right next to each other!", custom["description"], "custom:description")
+
     def test_oembed(self):
         oembed = pyunfurl.oembed("https://www.youtube.com/watch?v=v-eK_cpTsOw", 15)
         self.assertEqual(

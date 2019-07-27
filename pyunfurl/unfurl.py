@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import re
+
 from micawber import Provider, ProviderRegistry, ProviderException
+
+from pyunfurl.provider_data.custom import CUSTOM_PROVIDER_LIST
+from pyunfurl.provider_data.oembed import OEMBED_PROVIDER_LIST
 
 __version__ = "0.0.0.1"
 import micawber
@@ -80,9 +85,15 @@ def updated_provider_list():
     return providers
 
 
-def load_provider():
+def load_providers(remote=False):
     provider = ProviderRegistry(None)
-    for entry in updated_provider_list():
+
+    if remote:
+        provider_list = updated_provider_list()
+    else:
+        provider_list = OEMBED_PROVIDER_LIST
+
+    for entry in provider_list:
         provider.register(entry[0], Provider(entry[1]))
 
     return provider
@@ -153,7 +164,7 @@ def meta_tags(url, timeout=15, html=None):
 def oembed(url, timeout=15, html=None):
     embed = None
     try:
-        return load_provider().request(url)
+        return load_providers().request(url)
     except ProviderException:
         pass
 
@@ -182,7 +193,18 @@ def completed(data):
     return data["title"] and data["description"] and data["image"] and data["url"]
 
 
+def custom_unfurl(url, timeout=15, html=None):
+    for regex, provider in CUSTOM_PROVIDER_LIST:
+        if re.match(regex, url):
+            return provider(url, timeout, html)
+
+    return None
+
 def unfurl(url, timeout=15, html=None):
+
+    data = custom_unfurl(url, timeout, html)
+    if data:
+        return wrap_response(url, data, "custom")
 
     data = oembed(url, timeout, html)
     if data:
