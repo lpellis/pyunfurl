@@ -6,8 +6,20 @@ __version__ = "0.0.0.1"
 import micawber
 import requests
 from pyquery import PyQuery as pq
-from uritools import urijoin
+from uritools import urijoin, urisplit
 
+
+def template(className, url, image, title, description, domain):
+    return f"""<div class="unfurl {className}">
+    <a rel="noopener nofollow" target="_blank" href="{url}">
+        <img src="{image}">
+    </a>
+    <div class="unfurl-content">
+        <a class="unfurl-title" href="{url}">{title}</a>
+        <div>{description}</div>
+        <a class="unfurl-domain" href="{url}">{domain}</a>
+    </div>
+</div>"""
 
 def wrap_response(url, data, method):
 
@@ -24,6 +36,7 @@ def wrap_response(url, data, method):
     if favicon:
         favicon = urijoin(url, favicon)
 
+    domain = urisplit(url).authority
     site = data["title"]
     if "site_name" in data and data["site_name"]:
         site = data["site_name"]
@@ -34,20 +47,11 @@ def wrap_response(url, data, method):
         html = data["html"]
     else:
         if image:
-            html = f"""<div class="unfurl unfurl-image"><a rel="noopener nofollow" target="_blank" href="{url}"><img src="{image}"></a>
-            <div class="unfurl-site">{site}</div>
-            <div class="unfurl-title"><a rel="noopener nofollow" target="_blank" href="{url}">{title}</a></div>
-            <div class="unfurl-description">{description}</div></div>"""
+            html = template('unfurl-image', url, image, title, description, domain)
         elif favicon:
-            html = f"""<div class="unfurl unfurl-image unfurl-favicon"><a rel="noopener nofollow" target="_blank" href="{url}"><img src="{favicon}"></a>
-            <div class="unfurl-site">{site}</div>
-            <div class="unfurl-title"><a rel="noopener nofollow" target="_blank" href="{url}">{title}</a></div>
-            <div class="unfurl-description">{description}</div></div>"""
+            html = template('unfurl-image unfurl-favicon', url, favicon, title, description, domain)
         else:
-            html = f"""<div class="unfurl unfurl-plain">
-            <div class="unfurl-site">{site}</div>
-            <div class="unfurl-title"><a rel="noopener nofollow" target="_blank" href="{url}">{title}</a></div>
-            <div class="unfurl-description">{description}</div></div>"""
+            html = template('unfurl-image unfurl-default', url, 'default', title, description, domain)
 
     return {
         "method": method,
