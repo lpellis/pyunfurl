@@ -48,7 +48,7 @@ def wrap_response(url, data, method):
     if "provider_name" in data and data["provider_name"]:
         site = data["provider_name"]
 
-    if method == "oembed" or method == "custom":
+    if method == "oembed" or (method == "custom" and 'html' in data and data['html']):
         html = data["html"]
     else:
         if image:
