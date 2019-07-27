@@ -15,7 +15,7 @@ def hackernews(url, timeout=15, html=None):
     text = ""
     if "text" in item:
         text = item["text"]
-        text = text.replace('<p>', "")
+        text = text.replace('<p>', " ")
         text = re.sub('<[^<]+?>', '', text)
 
     title = ""
