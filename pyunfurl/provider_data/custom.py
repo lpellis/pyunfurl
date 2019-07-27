@@ -1,3 +1,5 @@
+import re
+
 import requests
 from uritools import urisplit
 
@@ -13,6 +15,8 @@ def hackernews(url, timeout=15, html=None):
     text = ""
     if "text" in item:
         text = item["text"]
+        text = text.replace('<p>', "")
+        text = re.sub('<[^<]+?>', '', text)
 
     title = ""
     root_item = item
@@ -35,7 +39,7 @@ def hackernews(url, timeout=15, html=None):
     return {
         "url": url,
         "title": title,
-        "site_name": f"{item['by']} (news.ycombinator.com)",
+        "domain": f"{item['by']} (news.ycombinator.com)",
         "description": text,
         "image": "",
         "favicon": "https://news.ycombinator.com/favicon.ico",

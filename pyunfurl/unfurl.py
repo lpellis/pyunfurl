@@ -42,6 +42,8 @@ def wrap_response(url, data, method):
         favicon = urijoin(url, favicon)
 
     domain = urisplit(url).authority
+    if 'domain' in data and data['domain']:
+        domain = data['domain']
     site = data["title"]
     if "site_name" in data and data["site_name"]:
         site = data["site_name"]
