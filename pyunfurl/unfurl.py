@@ -4,8 +4,8 @@ import re
 
 from micawber import Provider, ProviderRegistry, ProviderException
 
-from pyunfurl.provider_data.custom import CUSTOM_PROVIDER_LIST
-from pyunfurl.provider_data.oembed import OEMBED_PROVIDER_LIST
+from .provider_data.custom import CUSTOM_PROVIDER_LIST
+from .provider_data.oembed import OEMBED_PROVIDER_LIST
 
 __version__ = "0.0.0.1"
 import micawber
