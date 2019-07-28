@@ -26,6 +26,7 @@ def template(className, url, image, title, description, domain):
     </div>
 </div>"""
 
+
 def wrap_response(url, data, method):
 
     title = ("title" in data and data["title"]) or ""
@@ -42,23 +43,32 @@ def wrap_response(url, data, method):
         favicon = urijoin(url, favicon)
 
     domain = urisplit(url).authority
-    if 'domain' in data and data['domain']:
-        domain = data['domain']
+    if "domain" in data and data["domain"]:
+        domain = data["domain"]
     site = data["title"]
     if "site_name" in data and data["site_name"]:
         site = data["site_name"]
     if "provider_name" in data and data["provider_name"]:
         site = data["provider_name"]
 
-    if method == "oembed" or (method == "custom" and 'html' in data and data['html']):
+    if method == "oembed" or (method == "custom" and "html" in data and data["html"]):
         html = data["html"]
     else:
         if image:
-            html = template('unfurl-image', url, image, title, description, domain)
+            html = template("unfurl-image", url, image, title, description, domain)
         elif favicon:
-            html = template('unfurl-image unfurl-favicon', url, favicon, title, description, domain)
+            html = template(
+                "unfurl-image unfurl-favicon", url, favicon, title, description, domain
+            )
         else:
-            html = template('unfurl-image unfurl-default', url, 'default', title, description, domain)
+            html = template(
+                "unfurl-image unfurl-default",
+                url,
+                "https://i.imgur.com/wQ37ilJ.png",
+                title,
+                description,
+                domain,
+            )
 
     return {
         "method": method,
@@ -100,9 +110,6 @@ def load_providers(remote=False):
         provider.register(entry[0], Provider(entry[1]))
 
     return provider
-
-
-# https://medium.com/slack-developer-blog/everything-you-ever-wanted-to-know-about-unfurling-but-were-afraid-to-ask-or-how-to-make-your-e64b4bb9254
 
 
 def open_graph(url, timeout=15, html=None):
@@ -164,10 +171,10 @@ def meta_tags(url, timeout=15, html=None):
     }
 
 
-def oembed(url, timeout=15, html=None):
+def oembed(url, timeout=15, html=None, refresh_oembed_provider_list=False):
     embed = None
     try:
-        return load_providers().request(url)
+        return load_providers(refresh_oembed_provider_list).request(url)
     except ProviderException:
         pass
 
@@ -203,13 +210,22 @@ def custom_unfurl(url, timeout=15, html=None):
 
     return None
 
-def unfurl(url, timeout=15, html=None):
+
+def unfurl(url, timeout=15, html=None, refresh_oembed_provider_list=False):
+    """
+    :param url: The url to embed
+    :param timeout: Timeout (in seconds) to allow url to load
+    :param html: If you already have the html available you can pass it in to save a network call
+    :param refresh_oembed_provider_list: Set to True to reload the provider list from oembed.com, otherwise
+    the list that is included with pyunfurl is used
+    :return: dict
+    """
 
     data = custom_unfurl(url, timeout, html)
     if data:
         return wrap_response(url, data, "custom")
 
-    data = oembed(url, timeout, html)
+    data = oembed(url, timeout, html, refresh_oembed_provider_list)
     if data:
         return wrap_response(url, data, "oembed")
 
@@ -223,7 +239,3 @@ def unfurl(url, timeout=15, html=None):
 
     data = extend_dict(data, meta_tags(url, timeout, html))
     return wrap_response(url, data, "meta_tags")
-
-
-if __name__ == "__main__":
-    print(unfurl("https://news.ycombinator.com/item?id=20508465"))

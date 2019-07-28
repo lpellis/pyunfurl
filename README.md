@@ -1,6 +1,6 @@
 # PyUnfurl
 
-PyUnfurl is a Python library for embedding ('unfurling') content from other sites in your own site, similar to the way slack expands links.  
+PyUnfurl is a Python library for embedding ('unfurling') content from other sites into your own site, similar to the way slack expands links.  
 Useful for easily embedding tweets, YouTube videos, StackOverflow posts or content from any other site.
 
 ### Features
@@ -25,7 +25,7 @@ pip install pyunfurl
 import pyunfurl
 pyunfurl.unfurl('https://www.youtube.com/watch?v=aBr2kKAHN6M') 
 ```
-This will return a dict compatible with the oembed spec with some added keys:
+This will return a dict similar to the oembed spec:
 ```
 {
 	'method': 'oembed', # one of 'oembed', 'twitter_card', 'open_graph', 'meta_tags', 'custom'
@@ -113,6 +113,7 @@ You can style this any way you want, a good starting point is to include the fol
 ```
 This will generate a card looking like:
 
+![img](https://i.imgur.com/1CMJjJq.png)
 
 ## Contributing
 Pull requests are welcome. PyUnfurl supports some custom integrations for sites that doesnt return any meta tags, if you want to improve the integration for a specific site you can look at the hackernews example.

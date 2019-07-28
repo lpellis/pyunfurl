@@ -1,4 +1,0 @@
-
-import pyunfurl
-
-pyunfurl.main()
