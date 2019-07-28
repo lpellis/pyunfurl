@@ -4,6 +4,7 @@ import re
 
 from micawber import Provider, ProviderRegistry, ProviderException
 
+from pyunfurl.provider_data.noembed import NOEMBED_PROVIDER_LIST
 from .provider_data.custom import CUSTOM_PROVIDER_LIST
 from .provider_data.oembed import OEMBED_PROVIDER_LIST
 
@@ -52,6 +53,7 @@ def wrap_response(url, data, method):
         site = data["provider_name"]
 
     if method == "oembed" or (method == "custom" and "html" in data and data["html"]):
+        print(data)
         html = data["html"]
     else:
         if image:
@@ -85,28 +87,35 @@ def wrap_response(url, data, method):
     }
 
 
-def updated_provider_list():
-    providers = [[entry[0], entry[1].endpoint] for entry in micawber.bootstrap_basic()]
-    providers.extend(
-        [[entry[0], entry[1].endpoint] for entry in micawber.bootstrap_oembed()]
-    )
-    providers.extend(
-        [[entry[0], entry[1].endpoint] for entry in micawber.bootstrap_noembed()]
-    )
-    # print(json.dumps(providers))
+def updated_provider_list(list):
+    if list == "OEMBED":
+        providers = [
+            [entry[0], entry[1].endpoint] for entry in micawber.bootstrap_basic()
+        ]
+        providers.extend(
+            [[entry[0], entry[1].endpoint] for entry in micawber.bootstrap_oembed()]
+        )
+        return providers
 
-    return providers
+    if list == "NOEMBED":
+        return [[entry[0], entry[1].endpoint] for entry in micawber.bootstrap_noembed()]
+
+    return []
 
 
-def load_providers(remote=False):
+def load_providers(provider_list="OEMBED", remote=False):
     provider = ProviderRegistry(None)
 
     if remote:
-        provider_list = updated_provider_list()
+        providers = updated_provider_list(provider_list)
     else:
-        provider_list = OEMBED_PROVIDER_LIST
+        providers = []
+        if provider_list == "OEMBED":
+            providers = OEMBED_PROVIDER_LIST
+        if list == "NOEMBED":
+            providers = NOEMBED_PROVIDER_LIST
 
-    for entry in provider_list:
+    for entry in providers:
         provider.register(entry[0], Provider(entry[1]))
 
     return provider
@@ -172,23 +181,30 @@ def meta_tags(url, timeout=15, html=None):
 
 
 def oembed(url, timeout=15, html=None, refresh_oembed_provider_list=False):
-    embed = None
     try:
-        return load_providers(refresh_oembed_provider_list).request(url)
+        embed = load_providers("OEMBED", refresh_oembed_provider_list).request(url)
+        if embed and "html" in embed:
+            return embed
     except ProviderException:
         pass
 
-    if not embed:
-        try:
-            if not html:
-                html = requests.get(url, timeout=timeout).text
+    try:
+        embed = load_providers("NOEMBED", refresh_oembed_provider_list).request(url)
+        if embed and "html" in embed:
+            return embed
+    except ProviderException:
+        pass
 
-            d = pq(html)
-            oembed_url = d('link[type="application/json+oembed"]').attr("href")
-            if oembed_url:
-                return requests.get(oembed_url, timeout=timeout).json()
-        except requests.exceptions.RequestException as e:
-            return None
+    try:
+        if not html:
+            html = requests.get(url, timeout=timeout).text
+
+        d = pq(html)
+        oembed_url = d('link[type="application/json+oembed"]').attr("href")
+        if oembed_url:
+            return requests.get(oembed_url, timeout=timeout).json()
+    except requests.exceptions.RequestException as e:
+        return None
 
     return None
 
