@@ -63,6 +63,7 @@ def wrap_response(url, data, method):
     return {
         "method": method,
         "site": site,
+        "domain": domain,
         "title": title,
         "description": description,
         "image": image,
