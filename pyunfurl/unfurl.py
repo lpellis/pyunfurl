@@ -15,6 +15,9 @@ from pyquery import PyQuery as pq
 from uritools import urijoin, urisplit
 
 
+def get(url, timeout=15):
+    return requests.get(url, timeout=timeout, headers={'User-Agent': 'Twitterbot/1.0'})
+
 def template(className, url, image, title, description, domain):
     return f"""<div class="unfurl {className}">
     <a rel="noopener nofollow" target="_blank" href="{url}">
@@ -123,7 +126,7 @@ def load_providers(provider_list="OEMBED", remote=False):
 def open_graph(url, timeout=15, html=None):
 
     if not html:
-        html = requests.get(url, timeout=timeout).text
+        html = get(url, timeout=timeout).text
 
     d = pq(html)
     return {
@@ -142,7 +145,7 @@ def open_graph(url, timeout=15, html=None):
 def twitter_card(url, timeout=15, html=None):
 
     if not html:
-        html = requests.get(url, timeout=timeout).text
+        html = get(url, timeout=timeout).text
 
     d = pq(html)
     return {
@@ -158,7 +161,7 @@ def twitter_card(url, timeout=15, html=None):
 
 def meta_tags(url, timeout=15, html=None):
     if not html:
-        html = requests.get(url, timeout=timeout).text
+        html = get(url, timeout=timeout).text
 
     d = pq(html)
     favicon = d('link[rel="shortcut icon"]').attr("href")
@@ -196,12 +199,12 @@ def oembed(url, timeout=15, html=None, refresh_oembed_provider_list=False):
 
     try:
         if not html:
-            html = requests.get(url, timeout=timeout).text
+            html = get(url, timeout=timeout).text
 
         d = pq(html)
         oembed_url = d('link[type="application/json+oembed"]').attr("href")
         if oembed_url:
-            return requests.get(oembed_url, timeout=timeout).json()
+            return get(oembed_url, timeout=timeout).json()
     except requests.exceptions.RequestException as e:
         return None
 
