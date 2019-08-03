@@ -24,9 +24,9 @@ def template(className, url, image, title, description, domain):
         <img src="{image}">
     </a>
     <div class="unfurl-content">
-        <a class="unfurl-title" href="{url}">{title}</a>
+        <a rel="noopener nofollow" target="_blank" class="unfurl-title" href="{url}">{title}</a>
         <div>{description}</div>
-        <a class="unfurl-domain" href="{url}">{domain}</a>
+        <a rel="noopener nofollow" target="_blank" class="unfurl-domain" href="{url}">{domain}</a>
     </div>
 </div>"""
 
