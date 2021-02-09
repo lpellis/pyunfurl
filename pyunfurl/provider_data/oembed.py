@@ -1,11 +1,11 @@
 OEMBED_PROVIDER_LIST = [
     [
         "https://(\\S*\\.)?youtu(\\.be/|be\\.com/watch)\\S+",
-        "http://www.youtube.com/oembed?scheme=https&",
+        "https://www.youtube.com/oembed?scheme=https&",
     ],
     [
         "http://(\\S*\\.)?youtu(\\.be/|be\\.com/watch)\\S+",
-        "http://www.youtube.com/oembed",
+        "https://www.youtube.com/oembed",
     ],
     ["https?://wordpress\\.tv/\\S+", "http://wordpress.tv/oembed/"],
     ["http://\\S+\\.wordpress\\.com/\\S+", "http://public-api.wordpress.com/oembed/"],
@@ -60,11 +60,11 @@ OEMBED_PROVIDER_LIST = [
     ["http://chirb\\.it/\\S+", "http://chirb.it/oembed.json"],
     [
         "https://(\\S*\\.)?youtu(\\.be/|be\\.com/watch)\\S+",
-        "http://www.youtube.com/oembed?scheme=https&",
+        "https://www.youtube.com/oembed?scheme=https&",
     ],
     [
         "http://(\\S*\\.)?youtu(\\.be/|be\\.com/watch)\\S+",
-        "http://www.youtube.com/oembed",
+        "https://www.youtube.com/oembed",
     ],
     [
         "https://reports.zoho.com/ZDBDataSheetView.cc\\?OBJID=1432535000000003002&STANDALONE=true&INTERVAL=120&DATATYPESYMBOL=false&REMTOOLBAR=false&SEARCHBOX=true&INCLUDETITLE=true&INCLUDEDESC=true&SHOWHIDEOPT=true",
