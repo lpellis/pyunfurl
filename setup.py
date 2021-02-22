@@ -23,7 +23,7 @@ with io.open(os.path.join(CURDIR, "README.md"), "r", encoding="utf-8") as f:
 
 setup(
     name="pyunfurl",
-    version='0.1.4',
+    version='0.1.5',
     author="Loftie Ellis",
     author_email="pyunfurl@unfurl.dev",
     description="library for embedding ('unfurling') content from other sites into your own site",
