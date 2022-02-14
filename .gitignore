@@ -19,3 +19,7 @@ var/
 .mypy_cache/
 .vscode
 .idea
+.pytest_cache/
+.pytest_cache
+__pycache__/
+__pycache__

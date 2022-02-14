@@ -66,12 +66,12 @@ class UnitTests(unittest.TestCase):
             oembed["thumbnail_url"],
             "oembed:thumbnail_url",
         )
-        self.assertEqual(270, oembed["height"], "oembed:height")
+        self.assertEqual(113, oembed["height"], "oembed:height")
         self.assertEqual(
             "Adam Savage’s Tested", oembed["author_name"], "oembed:author_name"
         )
         self.assertEqual(
-            '<iframe width="480" height="270" src="https://www.youtube.com/embed/v-eK_cpTsOw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
+            '<iframe width="200" height="113" src="https://www.youtube.com/embed/v-eK_cpTsOw?feature=oembed" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>',
             oembed["html"],
             "oembed:html",
         )

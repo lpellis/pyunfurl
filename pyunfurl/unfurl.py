@@ -18,6 +18,7 @@ from uritools import urijoin, urisplit
 def get(url, timeout=15):
     return requests.get(url, timeout=timeout, headers={'User-Agent': 'Twitterbot/1.0'})
 
+
 def template(className, url, image, title, description, domain):
     return f"""<div class="unfurl {className}">
     <a rel="noopener nofollow" target="_blank" href="{url}">
@@ -176,8 +177,7 @@ def meta_tags(url, timeout=15, html=None):
         "description": d('meta[name="description"]').attr("content"),
         "image": d('meta[name="image"]').attr("content"),
         "favicon": favicon,
-        "url": d('meta[name="canonical"]').attr("content")
-        or d('meta[name="url"]').attr("content"),
+        "url": d('meta[name="canonical"]').attr("content") or d('meta[name="url"]').attr("content"),
         "keywords": d('meta[name="keywords"]').attr("content"),
     }
 
@@ -205,7 +205,7 @@ def oembed(url, timeout=15, html=None, refresh_oembed_provider_list=False):
         oembed_url = d('link[type="application/json+oembed"]').attr("href")
         if oembed_url:
             return get(oembed_url, timeout=timeout).json()
-    except requests.exceptions.RequestException as e:
+    except requests.exceptions.RequestException:
         return None
 
     return None
@@ -238,6 +238,9 @@ def unfurl(url, timeout=15, html=None, refresh_oembed_provider_list=False):
     the list that is included with pyunfurl is used
     :return: dict
     """
+
+    if not html:
+        html = get(url, timeout=timeout).text
 
     data = custom_unfurl(url, timeout, html)
     if data:
